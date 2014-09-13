@@ -1,9 +1,10 @@
 angular.module( "controllers", [] )
 
-.controller( "UploadCtrl", [ "$scope", "imageService", function( $scope, imageService ) {
+.controller( "UploadCtrl", [ "$scope", "$timeout", "imageService", function( $scope, $timeout, imageService ) {
 
 	$scope.images = [];
 	$scope.error = "";
+	$scope.flash = "";
 	$scope.uploading = false;
 
 	var setError = function( error ) {
@@ -15,6 +16,16 @@ angular.module( "controllers", [] )
 		setError("");
 	};
 
+	var flashMessage = function( message, duration ) {
+
+		$scope.flash = message;
+
+		$timeout(function() {
+			$scope.flash = "";
+		}, duration || 3000);
+
+	};
+
 	imageService.getImages().then(
 		function( data ) {
 			$scope.images = data;
@@ -24,13 +35,14 @@ angular.module( "controllers", [] )
 
 	$scope.uploadFile = function() {
 
-		$scope.uploading = true;
 		clearError();
+		$scope.uploading = true;
 
 		imageService.uploadImage( $scope.fileToUpload ).then(
 			function( data ) {
 				$scope.images.push( data.fileName );
 				$scope.uploading = false;
+				flashMessage( "Success!" );
 			},
 			setError
 		);

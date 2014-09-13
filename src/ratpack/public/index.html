@@ -19,12 +19,13 @@
 			<span ng-show="!uploading">Upload!</span>
 			<span ng-show="uploading">Uploading..</span>
 		</button>
+		<span ng-show="flash.length">{{ flash }}</span>
 	</form>
 
 	<h1>Uploaded Images</h1>
 
 	<div class="images">
-		<a ng-repeat="image in images" href="uploaded-files/{{ image }}"><img ng-src="uploaded-files/thumb/{{ image }}"></a>
+		<a ng-repeat="image in images" href="uploaded-files/{{ image }}" target="_blank"><img ng-src="uploaded-files/thumb/{{ image }}"></a>
 	</div>
 
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
