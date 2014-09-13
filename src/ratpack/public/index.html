@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="uploader">
+<head>
+	<meta charset="UTF-8">
+	<title>AngularJS File Upload with Ratpack</title>
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body ng-controller="UploadCtrl">
+	
+	<h1>File Uploader</h1>
+
+	<div ng-show="error.length">
+		<p>{{ error }}</p>
+	</div>
+
+	<form>
+		<input type="file" file-model="fileToUpload">
+		<button type="button" ng-click="uploadFile()" ng-disabled="uploading">
+			<span ng-show="!uploading">Upload!</span>
+			<span ng-show="uploading">Uploading..</span>
+		</button>
+	</form>
+
+	<h1>Uploaded Images</h1>
+
+	<div class="images">
+		<a ng-repeat="image in images" href="uploaded-files/{{ image }}"><img ng-src="uploaded-files/thumb/{{ image }}"></a>
+	</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/controllers.js"></script>
+<script src="js/services.js"></script>
+<script src="js/directives.js"></script>
+</body>
+</html>
