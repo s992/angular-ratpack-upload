@@ -15,7 +15,8 @@ class ImageService {
 		File imageDirectory = new File( imagePath )
 		List images = []
 
-		imageDirectory.eachFile( FileType.FILES ) { images << it.name }
+		imageDirectory.eachFile( FileType.FILES ) { images << it }
+		images = images.sort { it.lastModified() }.collect { it.name }
 
 		images
 

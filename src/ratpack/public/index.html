@@ -14,7 +14,7 @@
 	</div>
 
 	<form>
-		<input type="file" file-model="fileToUpload">
+		<input type="file" file-model="fileToUpload" ng-disabled="uploading">
 		<button type="button" ng-click="uploadFile()" ng-disabled="uploading">
 			<span ng-show="!uploading">Upload!</span>
 			<span ng-show="uploading">Uploading..</span>
@@ -22,7 +22,7 @@
 		<span ng-show="flash.length">{{ flash }}</span>
 	</form>
 
-	<h1>Uploaded Images</h1>
+	<h1>{{ images.length }} Uploaded Images</h1>
 
 	<div class="images">
 		<a ng-repeat="image in images" href="uploaded-files/{{ image }}" target="_blank"><img ng-src="uploaded-files/thumb/{{ image }}"></a>
