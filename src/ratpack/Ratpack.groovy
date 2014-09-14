@@ -10,8 +10,23 @@ import static ratpack.jackson.Jackson.json
 ratpack {
 
 	bindings {
+
 		add new JacksonModule()
 		add new ImageModule()
+
+		init {
+
+			println "checking directories"
+
+			String imageDirectoryPath = launchConfig.getOther( "uploadDirectory", null )
+			File directory = new File( "$imageDirectoryPath/thumb" )
+
+			if( !directory.exists() ) {
+				directory.mkdirs()
+			}
+
+		}
+
 	}
 
 	handlers {
