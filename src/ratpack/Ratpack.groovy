@@ -16,8 +16,6 @@ ratpack {
 
 		init {
 
-			println "checking directories"
-
 			String imageDirectoryPath = launchConfig.getOther( "uploadDirectory", null )
 			File directory = new File( "$imageDirectoryPath/thumb" )
 
@@ -38,9 +36,10 @@ ratpack {
 		prefix("image") { ImageService imageService ->
 
 			String imageDirectory = launchConfig.getOther( "uploadDirectory", null )
+			String imagePath = launchConfig.getOther( "imagePath", null )
 
 			get {
-				render json( imageService.getUploadedImages( imageDirectory ) )
+				render json([ imagePath: imagePath, images: imageService.getUploadedImages( imageDirectory ) ])
 			}
 
 			post("upload") {

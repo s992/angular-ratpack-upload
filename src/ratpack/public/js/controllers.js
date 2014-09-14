@@ -28,7 +28,8 @@ angular.module( "controllers", [] )
 
 	imageService.getImages().then(
 		function( data ) {
-			$scope.images = data;
+			$scope.imagePath = data.imagePath;
+			$scope.images = data.images;
 		},
 		setError
 	);
