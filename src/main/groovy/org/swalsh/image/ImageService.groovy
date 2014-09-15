@@ -1,24 +1,34 @@
 package org.swalsh.image
 
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import groovy.io.FileType
-import java.awt.image.BufferedImage
-import javax.imageio.ImageIO
 import org.imgscalr.Scalr
 import org.imgscalr.Scalr.Mode
+import ratpack.exec.ExecControl
+import ratpack.exec.Promise
 import ratpack.form.UploadedFile
+
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
+
 import static java.util.UUID.randomUUID
 
+@Singleton
 class ImageService {
 
-	List getUploadedImages( String imagePath ) {
+	private final ExecControl execControl
 
-		File imageDirectory = new File( imagePath )
-		List images = []
+	@Inject
+	ImageService( ExecControl execControl ) {
+		this.execControl = execControl
+	}
 
-		imageDirectory.eachFile( FileType.FILES ) { images << it }
-		images = images.sort { it.lastModified() }.collect { it.name }
+	Promise<List<String>> getUploadedImages( File imageDirectory ) {
 
-		images
+		execControl.blocking {
+			imageDirectory.listFiles( { it.isFile() } as FileFilter ).sort { it.lastModified() }*.name
+		}
 
 	}
 
@@ -26,18 +36,19 @@ class ImageService {
 		file.contentType.type.contains( "image" )
 	}
 
-	File process( UploadedFile file, String imageDirectory ) {
+	Promise<File> process( UploadedFile file, File imageDirectory, File thumbDirectory ) {
 
-		String fileName = getUniqueFilename( "png" )
+		String fileName = getUniqueFileName( "png" )
 		BufferedImage image = readImage( file )
-		File fullSize = saveImage( image, fileName, imageDirectory )
-		File thumb = saveThumb( image, fileName, imageDirectory )
 
-		fullSize
+		execControl.blocking {
+			saveThumb( image, fileName, thumbDirectory )
+			saveImage( image, fileName, imageDirectory )
+		}
 
 	}
 
-	String getUniqueFilename( String extension ) {
+	String getUniqueFileName( String extension ) {
 		"${randomUUID()}.$extension"
 	}
 
@@ -45,19 +56,19 @@ class ImageService {
 		ImageIO.read( file.inputStream )
 	}
 
-	File saveImage( BufferedImage image, String fileName, String imageDirectory ) {
+	File saveImage( BufferedImage image, String fileName, File directory ) {
 
-		File file = new File( "$imageDirectory/$fileName" )
+		File file = new File( directory, fileName )
 		ImageIO.write( image, "png", file )
 
 		file
 
 	}
 
-	File saveThumb( BufferedImage image, String fileName, String imageDirectory ) {
+	File saveThumb( BufferedImage image, String fileName, File directory ) {
 
 		BufferedImage thumb = Scalr.resize( image, Mode.FIT_TO_HEIGHT, 100 )
-		saveImage( thumb, fileName, "$imageDirectory/thumb" )
+		saveImage( thumb, fileName, directory )
 
 	}
 

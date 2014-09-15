@@ -1,5 +1,4 @@
-import java.awt.image.BufferedImage
-import org.swalsh.image.*
+import org.swalsh.image.ImageService
 import ratpack.form.Form
 import ratpack.form.UploadedFile
 import ratpack.jackson.JacksonModule
@@ -7,63 +6,61 @@ import ratpack.jackson.JacksonModule
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
 
+def assetsPath = "public"
+def imageDirName = "uploaded-files"
+def imagePath = "$assetsPath/$imageDirName"
+def thumbPath = "$imagePath/thumb"
+
 ratpack {
 
 	bindings {
 
 		add new JacksonModule()
-		add new ImageModule()
 
 		init {
-
-			String imageDirectoryPath = launchConfig.getOther( "uploadDirectory", null )
-			File directory = new File( "$imageDirectoryPath/thumb" )
-
-			if( !directory.exists() ) {
-				directory.mkdirs()
-			}
-
+			launchConfig.baseDir.file( thumbPath ).toFile().mkdirs()
 		}
 
 	}
 
 	handlers {
 
-		get {
-			render file( "public/index.html" )
-		}
+		assets assetsPath, "index.html"
 
 		prefix("image") { ImageService imageService ->
 
-			String imageDirectory = launchConfig.getOther( "uploadDirectory", null )
-			String imagePath = launchConfig.getOther( "imagePath", null )
+			def baseDir = launchConfig.baseDir
+			def imageDir = baseDir.file( imagePath ).toFile()
+			def thumbDir = baseDir.file( thumbPath ).toFile()
 
 			get {
-				render json([ imagePath: imagePath, images: imageService.getUploadedImages( imageDirectory ) ])
+
+				imageService.getUploadedImages( imageDir ).then {
+					render json( imagePath: imageDirName, images: it )
+				}
+
 			}
 
 			post("upload") {
 
-				Form form = parse Form
-				UploadedFile uploaded = form.file( "fileUpload" )
+				def form = parse Form
+				def uploaded = form.file( "fileUpload" )
 
 				if( imageService.isImageFile( uploaded ) ) {
 
-					File imageFile = imageService.process( uploaded, imageDirectory )
-					render json( fileName: imageFile.name )
+					imageService.process( uploaded, imageDir, thumbDir ).then {
+						render json( fileName: it.name )
+					}
 
 				} else {
 
-					response.status 400
-					response.send "Invalid file type. Images only!"
+					response.status(400).send "Invalid file type. Images only!"
 
 				}
 
 			}
 
 		}
-
-		assets "public"
 
 	}
 
