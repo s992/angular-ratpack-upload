@@ -1,6 +1,5 @@
 import org.swalsh.image.ImageService
 import ratpack.form.Form
-import ratpack.form.UploadedFile
 import ratpack.jackson.JacksonModule
 
 import static ratpack.groovy.Groovy.ratpack
