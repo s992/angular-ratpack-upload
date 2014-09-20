@@ -1,4 +1,4 @@
-angular.module( "controllers", [] )
+angular.module( "uploader.controllers" )
 
 .controller( "UploadCtrl", [ "$scope", "$timeout", "imageService", function( $scope, $timeout, imageService ) {
 

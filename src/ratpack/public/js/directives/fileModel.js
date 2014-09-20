@@ -1,4 +1,4 @@
-angular.module( "directives", [] )
+angular.module( "uploader.directives" )
 
 .directive( "fileModel", [ "$parse", function( $parse ) {
 	return {
