@@ -7,15 +7,14 @@ angular.module( "uploader.directives" )
 		restrict: "A",
 		link: function( scope, element, attrs ) {
 
-			var model = $parse( attrs.fileModel ),
-				modelSetter = model.assign;
+			var model = $parse( attrs.fileModel );
 
 			element.bind( "change", function() {
 				scope.$apply( function() {
-					modelSetter( scope, element[ 0 ].files[ 0 ] );
+					model.assign( scope, element[ 0 ].files[ 0 ] );
 				});
 			});
 
 		}
 	}
-}])
+}]);

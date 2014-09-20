@@ -17,7 +17,7 @@ angular.module( "uploader.services" )
 	return {
 
 		getImages: function() {
-			return promise(function( deferred ) {
+			return promise( function( deferred ) {
 
 				$http.get( "image" )
 					.success( function( data ) {
@@ -50,4 +50,4 @@ angular.module( "uploader.services" )
 		}
 
 	};
-}])
+}]);
