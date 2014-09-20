@@ -1,3 +1,5 @@
+"use strict";
+
 angular.module( "uploader.directives" )
 
 .directive( "fileModel", [ "$parse", function( $parse ) {

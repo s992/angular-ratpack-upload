@@ -1,3 +1,5 @@
+"use strict";
+
 angular.module( "uploader.controllers" )
 
 .controller( "UploadCtrl", [ "$scope", "$timeout", "imageService", function( $scope, $timeout, imageService ) {
