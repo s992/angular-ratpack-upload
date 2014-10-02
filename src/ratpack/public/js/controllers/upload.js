@@ -10,8 +10,12 @@ angular.module( "uploader.controllers" )
 	$scope.uploading = false;
 
 	var setError = function( error ) {
-		$scope.error = error || "";
+
+		// check error.data in case we're looking at an http response, then check for an error string, and
+		// then default it to a blank string.
+		$scope.error = error.data || error || "";
 		$scope.uploading = false;
+		
 	};
 
 	var clearError = function() {
@@ -29,9 +33,9 @@ angular.module( "uploader.controllers" )
 	};
 
 	imageService.getImages().then(
-		function( data ) {
-			$scope.imagePath = data.imagePath;
-			$scope.images = data.images;
+		function( response ) {
+			$scope.imagePath = response.data.imagePath;
+			$scope.images = response.data.images;
 		},
 		setError
 	);
@@ -42,8 +46,8 @@ angular.module( "uploader.controllers" )
 		$scope.uploading = true;
 
 		imageService.uploadImage( $scope.fileToUpload ).then(
-			function( data ) {
-				$scope.images.push( data.fileName );
+			function( response ) {
+				$scope.images.push( response.data.fileName );
 				$scope.uploading = false;
 				flashMessage( "Success!" );
 			},
